@@ -32,6 +32,92 @@ The controller cycles through states such as:
 
 Each state is held for a fixed number of clock cycles before transitioning to the next state.
 
+Block Diagram
+          ┌──────────────┐
+          │  NS GREEN    │
+          │  EW RED      │
+          └──────┬───────┘
+                 │ (counter done)
+                 ▼
+          ┌──────────────┐
+          │  NS YELLOW   │
+          │  EW RED      │
+          └──────┬───────┘
+                 │ (counter done)
+                 ▼
+          ┌──────────────┐
+          │  EW GREEN    │
+          │  NS RED      │
+          └──────┬───────┘
+                 │ (counter done)
+                 ▼
+          ┌──────────────┐
+          │  EW YELLOW   │
+          │  NS RED      │
+          └──────┬───────┘
+                 │ (counter done)
+                 ▼
+          ┌──────────────┐
+          │  NS GREEN    │
+          │  EW RED      │
+          └──────────────┘
+🔹 Design Architecture
+1. Moore FSM (Finite State Machine)
+
+This project is designed using a Moore Finite State Machine, where the outputs depend only on the current state and not directly on the inputs.
+
+Each state represents a specific traffic signal condition:
+
+NS Green / EW Red
+NS Yellow / EW Red
+EW Green / NS Red
+EW Yellow / NS Red
+
+In a Moore FSM:
+
+Outputs are generated based on the current state only
+State transitions occur on the clock edge
+Outputs remain stable within each state, avoiding glitches
+
+This makes the design reliable and suitable for real-world traffic control systems.
+
+2. State Encoding
+
+The FSM states are represented using a binary encoding scheme stored in a state register.
+
+Typical encoding used:
+
+State	Encoding
+NS Green	00
+NS Yellow	01
+EW Green	10
+EW Yellow	11
+
+The state register updates on every positive clock edge based on the next-state logic.
+
+3. Timing Method (Counter-Based Design)
+
+State transitions are controlled using a synchronous counter.
+
+Working:
+
+A counter increments on every clock cycle
+Each state is held for a fixed number of clock cycles
+When the counter reaches a predefined limit:
+Counter resets to zero
+FSM transitions to the next state
+
+This ensures accurate timing control for each traffic signal phase.
+
+Advantages:
+
+Precise timing control
+Fully synchronous design
+Easy to modify signal durations by changing counter values
+🔁 Overall System Flow
+
+Clock → Counter → FSM State Register → Output Logic (NS/EW Signals)
+
 
 
 
