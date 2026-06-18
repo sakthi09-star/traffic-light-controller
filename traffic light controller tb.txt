@@ -1,0 +1,63 @@
+`timescale 1ns / 1ps
+
+module traffic_light_controller_tb;
+
+    reg clk;
+    reg reset;
+
+    wire NS_R, NS_Y, NS_G;
+    wire EW_R, EW_Y, EW_G;
+
+    // DUT
+    traffic_light_controller dut (
+        .clk(clk),
+        .reset(reset),
+        .NS_R(NS_R),
+        .NS_Y(NS_Y),
+        .NS_G(NS_G),
+        .EW_R(EW_R),
+        .EW_Y(EW_Y),
+        .EW_G(EW_G)
+    );
+
+    // ----------------------------
+    // Clock generation
+    // ----------------------------
+    initial begin
+        clk = 0;
+        forever #5 clk = ~clk;
+    end
+
+    // ----------------------------
+    // VCD dump (IMPORTANT for Icarus)
+    // ----------------------------
+    initial begin
+        $dumpfile("dump.vcd");      // this file shows in EDA Playground
+        $dumpvars(0, traffic_light_controller_tb);
+    end
+
+    // ----------------------------
+    // Monitor
+    // ----------------------------
+    initial begin
+        $monitor("T=%0t | NS=%b%b%b | EW=%b%b%b",
+                 $time,
+                 NS_R, NS_Y, NS_G,
+                 EW_R, EW_Y, EW_G);
+    end
+
+    // ----------------------------
+    // Stimulus
+    // ----------------------------
+    initial begin
+        reset = 1;
+        #20;
+
+        reset = 0;
+
+        #500;
+
+        $finish;
+    end
+
+endmodule
